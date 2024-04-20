@@ -111,9 +111,9 @@ const PatientItem = () => {
         {patients ? (
           <TableBody>
             {patients &&
-              patients.map((patient) => (
+              patients.map((patient, index) => (
                 <TableRow key={patient._id}>
-                  <TableCell>{patient._id}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{patient.name}</TableCell>
                   <TableCell>{patient.Dob}</TableCell>
                   <TableCell>{patient.gender}</TableCell>

@@ -115,7 +115,14 @@ const PrescriptionForm = ({ setShowModal, onSubmit }) => {
           />
         </div>
 
-        <button onClick={handleAddMedicine}>Add Medicine</button>
+        <button
+          variant="contained"
+          color="primary"
+          sx={{ marginBottom: "16px" }}
+          onClick={handleAddMedicine}
+        >
+          Add Medicine
+        </button>
         <div>
           <h3>Medications</h3>
           <table>

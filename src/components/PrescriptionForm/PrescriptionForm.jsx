@@ -6,21 +6,22 @@ import Modal from "@mui/material/Modal";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import "./PrescriptionForm.css";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const PrescriptionForm = ({ setShowModal, onSubmit }) => {
+const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
   const { id } = useParams();
-  const patientId = "6616cd3e9ba7e0de5b0f95c1"; // Provided patient ID
   const [medications, setMedications] = useState([]);
   const [medicineName, setMedicineName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [quantity, setQuantity] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [openToast, setOpenToast] = useState(false);
-
+  const { enqueueSnackbar } = useSnackbar();
   const handleAddMedicine = () => {
     setMedications([...medications, { medicineName, frequency, quantity }]);
     setMedicineName("");
@@ -28,10 +29,12 @@ const PrescriptionForm = ({ setShowModal, onSubmit }) => {
     setQuantity("");
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        `//localhost:5000/api/prescription/add/${patientId}`, // Use provided patient ID
+        `//localhost:5000/api/prescription/add/${id}`, // Use provided patient ID
         {
           medications,
           symptoms,
@@ -40,12 +43,32 @@ const PrescriptionForm = ({ setShowModal, onSubmit }) => {
           withCredentials: true,
         }
       );
-      console.log(response);
-      setShowModal(false);
-      setOpenToast(true); // toast state to open after successful submission
-      onSubmit(); // Call onSubmit function passed as prop
+      if (response.status === 201) {
+        console.log("this is added prescriprtion response", response);
+        setShowModal(false);
+        setOpenToast(true);
+        onSubmit();
+        fetchPrescription();
+        enqueueSnackbar("Prescription added", { variant: "success" });
+      }
     } catch (error) {
-      console.error(error);
+      console.error("this is error", error);
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        localStorage.clear();
+      } else if (error.response.status == 400) {
+        enqueueSnackbar("Invalid field type", { variant: "info" });
+      } else if (error.response.status == 404) {
+        enqueueSnackbar(`${error.response.data.error}`, { variant: "error" });
+      } else if (error.response.status == 403) {
+        enqueueSnackbar("Invalid operation for role", { variant: "warning" });
+        setShowModal(false);
+      } else {
+        enqueueSnackbar("An error occured", { variant: "error" });
+      }
     }
   };
 
@@ -107,7 +130,7 @@ const PrescriptionForm = ({ setShowModal, onSubmit }) => {
           <TextField
             id="quantity"
             label="Quantity"
-            type="number" // Change input type to number
+            type="number"
             value={quantity}
             multiline
             onChange={(e) => setQuantity(e.target.value)}

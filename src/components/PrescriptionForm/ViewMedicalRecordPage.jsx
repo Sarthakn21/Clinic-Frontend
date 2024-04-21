@@ -12,70 +12,96 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import PrescriptionForm from "./PrescriptionForm"; // Import PrescriptionForm component
+import PrescriptionForm from "./PrescriptionForm";
 import SvgIcon from "@mui/material/SvgIcon";
-
+import { useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const ViewMedicalRecordPage = () => {
   const [patientDetails, setPatientDetails] = useState({
     name: "",
     mobileNumber: "",
   });
   const [medicalRecords, setMedicalRecords] = useState([]);
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+  const [showModal, setShowModal] = useState(false);
+  const { id } = useParams();
+
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const fetchPrescription = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/prescription/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.data.statusCode == 200) {
+        const prescriptions = response.data.data.map((record) => ({
+          ...record,
+          date: formatDate(record.createdAt), // Format date here
+        }));
+        setMedicalRecords(prescriptions);
+        if (prescriptions.length === 0) {
+          enqueueSnackbar("No prescription found to patient", {
+            variant: "info",
+          });
+        }
+
+        fetchPatientDetails();
+      }
+    } catch (error) {
+      console.error("Failed to fetch prescriptions:", error);
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        localStorage.clear();
+      } else if (error.response.status == 404) {
+        enqueueSnackbar("Inavlid patient", {
+          variant: "error",
+        });
+      } else {
+        enqueueSnackbar("An error occured", { variant: "error" });
+      }
+    }
+  };
+
+  const fetchPatientDetails = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/patients/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.data.statusCode == 200) {
+        const { name, contactNumber } = response.data.data;
+        setPatientDetails({ name, mobileNumber: contactNumber });
+      } else {
+        console.error("Failed to fetch patient details:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Failed to fetch patient details:", error);
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        localStorage.clear();
+      } else if (error.response.status == 404) {
+        enqueueSnackbar("Patient not found", { variant: "error" });
+      } else {
+        enqueueSnackbar("An error occured", { variant: "error" });
+      }
+    }
+  };
 
   useEffect(() => {
     // Function to fetch prescription by patientId
-    const fetchPrescription = async () => {
-      try {
-        const patientId = "6616cd3e9ba7e0de5b0f95c1";
-        const response = await fetch(
-          `http://localhost:5000/api/prescription/${patientId}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const prescriptions = data.data.map((record) => ({
-            ...record,
-            date: formatDate(record.createdAt), // Format date here
-          }));
-          console.log("Prescription data:", prescriptions);
-          setMedicalRecords(prescriptions);
-          // Fetch patient details after setting medical records
-          fetchPatientDetails(patientId);
-        } else {
-          console.error("Failed to fetch prescriptions:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Failed to fetch prescriptions:", error);
-      }
-    };
-
-    const fetchPatientDetails = async (patientId) => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/patients/${patientId}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const { name, contactNumber } = data.data;
-          setPatientDetails({ name, mobileNumber: contactNumber });
-        } else {
-          console.error(
-            "Failed to fetch patient details:",
-            response.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Failed to fetch patient details:", error);
-      }
-    };
 
     fetchPrescription(); // Call fetchPrescription here
   }, []);
@@ -83,24 +109,36 @@ const ViewMedicalRecordPage = () => {
   // Handle delete record
   const handleDeleteRecord = async (recordId) => {
     try {
-      const response = await fetch(
+      const response = await axios.delete(
         `http://localhost:5000/api/prescription/delete/${recordId}`,
         {
-          method: "DELETE",
-          credentials: "include",
+          withCredentials: true,
         }
       );
-      if (response.ok) {
+      if (response.data.statusCode == 200) {
         const updatedRecords = medicalRecords.filter(
           (record) => record._id !== recordId
         );
         setMedicalRecords(updatedRecords);
-        console.log("Record deleted successfully");
-      } else {
-        console.error("Failed to delete record:", response.statusText);
+        enqueueSnackbar("Record deleted", { variant: "success" });
       }
     } catch (error) {
-      console.error("Failed to delete record:", error);
+      // console.error("Failed to delete record:", error);
+      if (error.response.status == 403) {
+        enqueueSnackbar("Invalid action for role", { variant: "warning" });
+      } else if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        localStorage.clear();
+      } else if (error.response.status == 404) {
+        enqueueSnackbar("no prescription found", { variant: "info" });
+      } else {
+        enqueueSnackbar("An error occured while deleting", {
+          variant: "error",
+        });
+      }
     }
   };
 
@@ -273,9 +311,9 @@ const ViewMedicalRecordPage = () => {
         <PrescriptionForm
           setShowModal={setShowModal}
           onSubmit={() => setShowModal(false)}
+          fetchPrescription={fetchPrescription}
         />
       )}
-      {/* Render PrescriptionForm modal */}
     </Box>
   );
 };

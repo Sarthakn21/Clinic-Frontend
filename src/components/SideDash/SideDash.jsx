@@ -330,36 +330,6 @@ export default function SideDash() {
               onClick={handleDrawerClose}
             >
               <ListItemButton
-                component={Link}
-                to="/prescription"
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open || isHovered ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open || isHovered ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <MedicationIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Prescription"
-                  sx={{ opacity: open || isHovered ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={handleDrawerClose}
-            >
-              <ListItemButton
                 onClick={handleOpenModal}
                 sx={{
                   minHeight: 48,

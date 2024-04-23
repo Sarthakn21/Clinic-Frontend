@@ -45,7 +45,7 @@ export default function AppointmentList() {
   const [openModal, setOpenModal] = useState(false);
   const [newAppointment, setNewAppointment] = useState({
     patientName: "",
-    patientGender: "", // Modified state to store gender
+    patientGender: "Male", // Modified state to store gender
     patientAge: 0,
     patientMobileNumber: "",
     reason: "",
@@ -84,7 +84,7 @@ export default function AppointmentList() {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/appointments/${id}`,
+        `http://localhost:5000/api/appointments/delete/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -93,14 +93,17 @@ export default function AppointmentList() {
           credentials: "include",
         }
       );
+      console.log("this is delete response", response);
       if (!response.ok) {
         throw new Error("Failed to delete appointment");
       }
+
       setAppointments(
         appointments.filter((appointment) => appointment._id !== id)
       );
+      enqueueSnackbar("Appointment deleted", { variant: "success" });
     } catch (error) {
-      console.error(error);
+      enqueueSnackbar("Failed to delete appointment", { variant: "error" });
     }
   };
 
@@ -116,7 +119,11 @@ export default function AppointmentList() {
     const { name, value } = e.target;
     setNewAppointment({ ...newAppointment, [name]: value });
   };
-
+  const handleSubmitOnEnter = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit(event);
+    }
+  };
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
@@ -195,7 +202,7 @@ export default function AppointmentList() {
                   handleClick(row);
                 }}
               >
-                <StyledTableCell align="left">{index}</StyledTableCell>
+                <StyledTableCell align="left">{index + 1}</StyledTableCell>
                 <StyledTableCell align="left">
                   {row.patientName}
                 </StyledTableCell>
@@ -257,7 +264,7 @@ export default function AppointmentList() {
           <h2 id="modal-title" style={{ color: "#008DDA" }}>
             Add New Appointment
           </h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} onKeyDown={handleSubmitOnEnter}>
             <TextField
               fullWidth
               variant="outlined"
@@ -268,26 +275,26 @@ export default function AppointmentList() {
               multiline
               margin="normal"
             />
-            <Select // Use Select component for gender field
+            <TextField
+              select
               fullWidth
               label="Gender"
               name="patientGender"
               value={newAppointment.patientGender}
               onChange={handleInputChange}
-              multiline
               margin="normal"
+              multiline
             >
               <MenuItem defaultChecked value="Male">
                 Male
               </MenuItem>
               <MenuItem value="Female">Female</MenuItem>
               <MenuItem value="Other">Other</MenuItem>
-            </Select>
+            </TextField>
             <TextField
               fullWidth
               label="Age"
               name="patientAge"
-              value={newAppointment.patientAge}
               onChange={handleInputChange}
               margin="normal"
               type="number"

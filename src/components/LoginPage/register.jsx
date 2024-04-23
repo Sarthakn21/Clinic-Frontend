@@ -12,6 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import MenuItem from "@mui/material/MenuItem"; // Import MenuItem from @mui/material
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import { useSnackbar } from "notistack";
+import axios from "axios";
 
 function Copyright(props) {
   return (
@@ -34,26 +38,76 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const [formData, setFormData] = React.useState({
-    username: "",
-    email: "",
-    password: "",
-    role: "",
-  });
+  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [role, setRole] = React.useState("Doctor"); // Set initial role state to "Doctor"
+  const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = (event) => {
+  const Role = [
+    {
+      value: "Doctor",
+      label: "Doctor",
+    },
+    {
+      value: "Receptionist",
+      label: "Receptionist",
+    },
+  ];
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData); // Log the form data
-    // Call your function to send data to the server here
+    console.log(username, email, password, role);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/register",
+        {
+          username,
+          email,
+          password,
+          role,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+      if (response.status === 201) {
+        enqueueSnackbar("User Registered", { variant: "success" });
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (error.response.status == 404) {
+        enqueueSnackbar("All fields are required", {
+          variant: "error",
+        });
+      } else if (error.response.status == 409) {
+        enqueueSnackbar("invalid password", { variant: "error" });
+      } else if (error.response.status == 400) {
+        enqueueSnackbar(`${error.response.data.error}`, { variant: "error" });
+      } else {
+        enqueueSnackbar("An error occured", { variant: "error" });
+      }
+    }
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-    console.log(formData);
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleRoleChange = (event) => {
+    console.log(event.target.value);
+    setRole(event.target.value);
   };
 
   return (
@@ -68,8 +122,8 @@ export default function SignUp() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+          <Avatar sx={{ m: 1, bgcolor: "black" }}>
+            <HowToRegIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Register User
@@ -90,8 +144,9 @@ export default function SignUp() {
                   id="username"
                   label="Username"
                   autoFocus
-                  onChange={handleChange}
+                  onChange={handleUsernameChange}
                   multiline
+                  value={username}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -102,8 +157,9 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  onChange={handleChange}
+                  onChange={handleEmailChange}
                   multiline
+                  value={email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -115,8 +171,8 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                  onChange={handleChange}
-                  multiline
+                  onChange={handlePasswordChange}
+                  value={password}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -126,15 +182,11 @@ export default function SignUp() {
                   fullWidth
                   name="role"
                   label="Role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  multiline
-                  SelectProps={{
-                    native: true,
-                  }}
+                  defaultValue="Doctor"
+                  onChange={handleRoleChange}
                 >
-                  <option value="Doctor">Doctor</option>
-                  <option value="Receptionist">Receptionist</option>
+                  <MenuItem value="Doctor">Doctor</MenuItem>
+                  <MenuItem value="Reception">Reception</MenuItem>
                 </TextField>
               </Grid>
             </Grid>

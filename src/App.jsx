@@ -6,7 +6,6 @@ import { GlobalContext } from "./context/GlobalContext";
 import LandingPage from "./pages/landing-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
-import PatientItem from "./components/PatientPage/patient-item";
 import PatientInfoPage from "./pages/patient-info-page";
 import AppointmentPage from "./pages/appointment-page";
 import PrescriptionPage from "./pages/prescription-page";

@@ -12,36 +12,46 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import MenuItem from "@mui/material/MenuItem"; // Import MenuItem from @mui/material
+import MenuItem from "@mui/material/MenuItem";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Kaya Connect
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
+function createData(username, email, role) {
+  return { username, email, role };
 }
 
 const defaultTheme = createTheme();
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//   [`&.${tableCellClasses.head}`]: {
+//     backgroundColor: theme.palette.common.black,
+//     color: theme.palette.common.white,
+//   },
+//   [`&.${tableCellClasses.body}`]: {
+//     fontSize: 14,
+//     border: "none",
+//     padding: theme.spacing(2),
+//   },
+// }));
+
+// const StyledTableRow = styled(TableRow)(({ theme }) => ({
+//   "&:hover": {
+//     backgroundColor: theme.palette.action.hover,
+//   },
+// }));
 
 export default function SignUp() {
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [role, setRole] = React.useState("Doctor"); // Set initial role state to "Doctor"
+  const [role, setRole] = React.useState("Doctor");
+  const [users, setUsers] = React.useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
   const Role = [
@@ -75,6 +85,10 @@ export default function SignUp() {
       console.log(response);
       if (response.status === 201) {
         enqueueSnackbar("User Registered", { variant: "success" });
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setRole("Doctor");
       }
     } catch (error) {
       console.log(error);
@@ -84,11 +98,11 @@ export default function SignUp() {
           variant: "error",
         });
       } else if (error.response.status == 409) {
-        enqueueSnackbar("invalid password", { variant: "error" });
+        enqueueSnackbar("Invalid password", { variant: "error" });
       } else if (error.response.status == 400) {
         enqueueSnackbar(`${error.response.data.error}`, { variant: "error" });
       } else {
-        enqueueSnackbar("An error occured", { variant: "error" });
+        enqueueSnackbar("An error occurred", { variant: "error" });
       }
     }
   };
@@ -110,9 +124,28 @@ export default function SignUp() {
     setRole(event.target.value);
   };
 
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/users", {
+          withCredentials: true,
+        });
+        console.log(response.data);
+        setUsers(response.data.data);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+        enqueueSnackbar("An error occurred while fetching users", {
+          variant: "error",
+        });
+      }
+    };
+
+    fetchUsers();
+  }, []); // Fetch users on component mount
+
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="md">
         <CssBaseline />
         <Box
           sx={{
@@ -135,7 +168,7 @@ export default function SignUp() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
                   name="username"
@@ -144,12 +177,12 @@ export default function SignUp() {
                   id="username"
                   label="Username"
                   autoFocus
-                  onChange={handleUsernameChange}
                   multiline
+                  onChange={handleUsernameChange}
                   value={username}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
@@ -158,8 +191,8 @@ export default function SignUp() {
                   name="email"
                   autoComplete="email"
                   onChange={handleEmailChange}
-                  multiline
                   value={email}
+                  multiline
                 />
               </Grid>
               <Grid item xs={12}>
@@ -185,8 +218,11 @@ export default function SignUp() {
                   defaultValue="Doctor"
                   onChange={handleRoleChange}
                 >
-                  <MenuItem value="Doctor">Doctor</MenuItem>
-                  <MenuItem value="Reception">Reception</MenuItem>
+                  {Role.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
             </Grid>
@@ -199,8 +235,30 @@ export default function SignUp() {
               Register User
             </Button>
           </Box>
+          <Box sx={{ mt: 5, width: "100%" }}>
+            <Typography variant="h6">User Details</Typography>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Username</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Role</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.username}>
+                      <TableCell>{user.username}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{user.role}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );

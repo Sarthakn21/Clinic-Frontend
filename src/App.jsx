@@ -6,14 +6,12 @@ import { GlobalContext } from "./context/GlobalContext";
 import LandingPage from "./pages/landing-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
-import PatientItem from "./components/PatientPage/patient-item";
 import PatientInfoPage from "./pages/patient-info-page";
 import AppointmentPage from "./pages/appointment-page";
 import PrescriptionPage from "./pages/prescription-page";
 import DashboardPage from "./pages/dashboard-page";
 import SideDash from "./components/SideDash/SideDash";
 import PatientPage from "./pages/patient-page";
-import SignIn from "./components/LoginPage/SignIn";
 
 function App() {
   const { currentUser, setCurrentUser } = useContext(GlobalContext);

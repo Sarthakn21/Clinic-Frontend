@@ -102,8 +102,11 @@ const ViewMedicalRecordPage = () => {
 
   useEffect(() => {
     // Function to fetch prescription by patientId
+    const fetchPrescriptionAndPatientDetails = async () => {
+      await fetchPrescription();
+    };
 
-    fetchPrescription(); // Call fetchPrescription here
+    fetchPrescriptionAndPatientDetails();
   }, []);
 
   // Handle delete record
@@ -184,129 +187,132 @@ const ViewMedicalRecordPage = () => {
       >
         Add New Record
       </Button>
-      {medicalRecords.map((record) => (
-        <Box
-          key={record._id}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-            marginBottom: "16px",
-            paddingLeft: "5%",
-            paddingRight: "5%",
-          }}
-        >
-          <Card
+      {medicalRecords
+        .slice()
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map((record) => (
+          <Box
+            key={record._id}
             sx={{
-              flexBasis: "50%",
               display: "flex",
-              flexDirection: "column",
-              alignItems: "left",
-              position: "relative",
-              backgroundColor: "#F5F5F5",
+              justifyContent: "space-between",
+              width: "100%",
+              marginBottom: "16px",
+              paddingLeft: "5%",
+              paddingRight: "5%",
             }}
           >
-            <CardContent
+            <Card
               sx={{
+                flexBasis: "50%",
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "flex-start",
+                alignItems: "left",
+                position: "relative",
+                backgroundColor: "#F5F5F5",
               }}
             >
-              <Typography
-                variant="h6"
-                sx={{
-                  color: "#008DDA",
-                  fontSize: "2rem",
-                  alignItems: "center",
-                }}
-              >
-                Symptoms
-              </Typography>
-              <Typography variant="body1" sx={{ fontSize: "1.5rem" }}>
-                {record.symptoms}
-              </Typography>
-            </CardContent>
-            <Typography
-              variant="h6"
-              sx={{ position: "absolute", bottom: "10px", right: "10px" }}
-            >
-              Date: {record.date}
-            </Typography>
-            <SvgIcon
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              style={{
-                position: "absolute",
-                bottom: "10px",
-                left: "8px",
-                width: "3rem",
-                height: "3rem",
-              }}
-            >
-              <path
-                fill="currentColor"
-                d="M4 4v10h2v-4h2l5.41 5.41L9.83 19l1.41 1.41l3.59-3.58l3.58 3.58L19.82 19l-3.58-3.59l3.58-3.58l-1.41-1.42L14.83 14l-4-4H11a3 3 0 0 0 3-3a3 3 0 0 0-3-3zm2 2h5a1 1 0 0 1 1 1a1 1 0 0 1-1 1H6z"
-              ></path>
-            </SvgIcon>
-          </Card>
-          <Card
-            sx={{
-              flexBasis: "45%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              backgroundColor: "#F5F5F5",
-            }}
-          >
-            <CardContent>
-              <Box
+              <CardContent
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "center",
+                  alignItems: "flex-start",
                 }}
               >
                 <Typography
                   variant="h6"
-                  sx={{ color: "#008DDA", fontSize: "2rem" }}
+                  sx={{
+                    color: "#008DDA",
+                    fontSize: "2rem",
+                    alignItems: "center",
+                  }}
                 >
-                  Medications
+                  Symptoms
                 </Typography>
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <b>Medicine Name</b>
-                        </TableCell>
-                        <TableCell>
-                          <b>Frequency</b>
-                        </TableCell>
-                        <TableCell>
-                          <b>Quantity</b>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {record.medications.map((medicine, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{medicine.medicineName}</TableCell>
-                          <TableCell>{medicine.frequency}</TableCell>
-                          <TableCell>{medicine.quantity}</TableCell>
+                <Typography variant="body1" sx={{ fontSize: "1.5rem" }}>
+                  {record.symptoms}
+                </Typography>
+              </CardContent>
+              <Typography
+                variant="h6"
+                sx={{ position: "absolute", bottom: "10px", right: "10px" }}
+              >
+                Date: {record.date}
+              </Typography>
+              <SvgIcon
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "8px",
+                  width: "3rem",
+                  height: "3rem",
+                }}
+              >
+                <path
+                  fill="currentColor"
+                  d="M4 4v10h2v-4h2l5.41 5.41L9.83 19l1.41 1.41l3.59-3.58l3.58 3.58L19.82 19l-3.58-3.59l3.58-3.58l-1.41-1.42L14.83 14l-4-4H11a3 3 0 0 0 3-3a3 3 0 0 0-3-3zm2 2h5a1 1 0 0 1 1 1a1 1 0 0 1-1 1H6z"
+                ></path>
+              </SvgIcon>
+            </Card>
+            <Card
+              sx={{
+                flexBasis: "45%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                backgroundColor: "#F5F5F5",
+              }}
+            >
+              <CardContent>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{ color: "#008DDA", fontSize: "2rem" }}
+                  >
+                    Medications
+                  </Typography>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>
+                            <b>Medicine Name</b>
+                          </TableCell>
+                          <TableCell>
+                            <b>Frequency</b>
+                          </TableCell>
+                          <TableCell>
+                            <b>Quantity</b>
+                          </TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <IconButton onClick={() => handleDeleteRecord(record._id)}>
-                  <DeleteIcon color="error" />
-                </IconButton>
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
-      ))}
+                      </TableHead>
+                      <TableBody>
+                        {record.medications.map((medicine, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{medicine.medicineName}</TableCell>
+                            <TableCell>{medicine.frequency}</TableCell>
+                            <TableCell>{medicine.quantity}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <IconButton onClick={() => handleDeleteRecord(record._id)}>
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </Box>
+              </CardContent>
+            </Card>
+          </Box>
+        ))}
       {showModal && (
         <PrescriptionForm
           setShowModal={setShowModal}

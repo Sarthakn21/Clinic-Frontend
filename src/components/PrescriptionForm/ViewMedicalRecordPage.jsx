@@ -6,6 +6,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PrintIcon from "@mui/icons-material/Print";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -16,8 +17,10 @@ import PrescriptionForm from "./PrescriptionForm";
 import SvgIcon from "@mui/material/SvgIcon";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const ViewMedicalRecordPage = () => {
   const [patientDetails, setPatientDetails] = useState({
     name: "",
@@ -49,7 +52,7 @@ const ViewMedicalRecordPage = () => {
         }));
         setMedicalRecords(prescriptions);
         if (prescriptions.length === 0) {
-          enqueueSnackbar("No prescription found to patient", {
+          enqueueSnackbar("No prescription found for this patient", {
             variant: "info",
           });
         }
@@ -65,11 +68,11 @@ const ViewMedicalRecordPage = () => {
         navigate("/login");
         localStorage.clear();
       } else if (error.response.status == 404) {
-        enqueueSnackbar("Inavlid patient", {
+        enqueueSnackbar("Invalid patient", {
           variant: "error",
         });
       } else {
-        enqueueSnackbar("An error occured", { variant: "error" });
+        enqueueSnackbar("An error occurred", { variant: "error" });
       }
     }
   };
@@ -107,7 +110,7 @@ const ViewMedicalRecordPage = () => {
       } else if (error.response.status == 404) {
         enqueueSnackbar("Patient not found", { variant: "error" });
       } else {
-        enqueueSnackbar("An error occured", { variant: "error" });
+        enqueueSnackbar("An error occurred", { variant: "error" });
       }
     }
   };
@@ -138,7 +141,6 @@ const ViewMedicalRecordPage = () => {
         enqueueSnackbar("Record deleted", { variant: "success" });
       }
     } catch (error) {
-      // console.error("Failed to delete record:", error);
       if (error.response.status == 403) {
         enqueueSnackbar("Invalid action for role", { variant: "warning" });
       } else if (error.response.status == 401) {
@@ -148,15 +150,15 @@ const ViewMedicalRecordPage = () => {
         navigate("/login");
         localStorage.clear();
       } else if (error.response.status == 404) {
-        enqueueSnackbar("no prescription found", { variant: "info" });
+        enqueueSnackbar("No prescription found", { variant: "info" });
       } else {
-        enqueueSnackbar("An error occured while deleting", {
+        enqueueSnackbar("An error occurred while deleting", {
           variant: "error",
         });
       }
     }
   };
-  console.log(patientDetails);
+
   // Function to format date as DD-MM-YYYY
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -261,7 +263,7 @@ const ViewMedicalRecordPage = () => {
           >
             <Card
               sx={{
-                flexBasis: "50%",
+                flexBasis: "53%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "left",
@@ -362,9 +364,30 @@ const ViewMedicalRecordPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
-                  <IconButton onClick={() => handleDeleteRecord(record._id)}>
-                    <DeleteIcon color="error" />
-                  </IconButton>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop:"20px",
+                      padding:"10px",
+                    }}
+                  >
+                    <div>
+                      <IconButton
+                        onClick={() => handleDeleteRecord(record._id)}
+                        sx={{ marginRight: "8px" }}
+                      >
+                        <DeleteIcon color="error" />
+                      </IconButton>
+                    </div>
+                    <div style={{marginLeft: "16px"}}>
+                      <IconButton component={Link} to={`/Print/${record._id}`}>
+                        <PrintIcon color="primary" />
+                      </IconButton>
+                    </div>
+                  </div>
                 </Box>
               </CardContent>
             </Card>

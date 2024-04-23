@@ -13,7 +13,7 @@ import PrescriptionPage from "./pages/prescription-page";
 import DashboardPage from "./pages/dashboard-page";
 import SideDash from "./components/SideDash/SideDash";
 import PatientPage from "./pages/patient-page";
-import SignIn from "./components/LoginPage/SignIn";
+import Print from "./pages/Print";
 
 function App() {
   const { currentUser, setCurrentUser } = useContext(GlobalContext);
@@ -28,6 +28,7 @@ function App() {
         <Route path="/patientinfo/:id" element={<PatientInfoPage />} />
         <Route path="/appointment" element={<AppointmentPage />} />
         <Route path="/prescription" element={<PrescriptionPage />} />
+        <Route path="/Print/:id" element={<Print/>} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </>

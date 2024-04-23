@@ -22,6 +22,10 @@ const ViewMedicalRecordPage = () => {
   const [patientDetails, setPatientDetails] = useState({
     name: "",
     mobileNumber: "",
+    age: "",
+    weight: "",
+    gender: "",
+    address: "",
   });
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -79,8 +83,16 @@ const ViewMedicalRecordPage = () => {
         }
       );
       if (response.data.statusCode == 200) {
-        const { name, contactNumber } = response.data.data;
-        setPatientDetails({ name, mobileNumber: contactNumber });
+        const { name, contactNumber, age, weight, gender, address } =
+          response.data.data;
+        setPatientDetails({
+          name,
+          mobileNumber: contactNumber,
+          age,
+          weight,
+          gender,
+          address,
+        });
       } else {
         console.error("Failed to fetch patient details:", response.statusText);
       }
@@ -144,7 +156,7 @@ const ViewMedicalRecordPage = () => {
       }
     }
   };
-
+  console.log(patientDetails);
   // Function to format date as DD-MM-YYYY
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -167,17 +179,62 @@ const ViewMedicalRecordPage = () => {
       <Box
         sx={{
           display: "flex",
+          flexDirection: "row",
           justifyContent: "space-between",
           width: "100%",
-          padding: "16px",
+          padding: "20px",
+          marginTop: "10px",
         }}
       >
-        <Typography variant="h6" sx={{ fontSize: "2rem", color: "#074173" }}>
-          {patientDetails.name}
-        </Typography>
-        <Typography variant="body1" sx={{ fontSize: "2rem", color: "#074173" }}>
-          {patientDetails.mobileNumber}
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <Typography variant="h6" sx={{ fontSize: "2rem", color: "#074173" }}>
+            Name: {patientDetails.name}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontSize: "1.5rem", color: "#074173" }}
+          >
+            Mobile Number: {patientDetails.mobileNumber}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontSize: "1.5rem", color: "#074173" }}
+          >
+            Age: {patientDetails.age}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{ fontSize: "1.5rem", color: "#074173" }}
+          >
+            Weight: {patientDetails.weight}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontSize: "1.5rem", color: "#074173" }}
+          >
+            Gender: {patientDetails.gender}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontSize: "1.5rem", color: "#074173" }}
+          >
+            Address: {patientDetails.address}
+          </Typography>
+        </Box>
       </Box>
       <Button
         variant="contained"

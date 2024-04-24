@@ -3,13 +3,20 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
+import { useSnackbar } from "notistack";
 const PrescriptionPrintingPage = () => {
   const [patientData, setPatientData] = useState(null);
   const [medications, setMedications] = useState([]);
   const [error, setError] = useState(null);
   const componentRef = useRef();
   const { id } = useParams();
+  const { setCurrentUser } = useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const getCurrentDate = () => {
     const date = new Date();
@@ -40,6 +47,19 @@ const PrescriptionPrintingPage = () => {
         }
       } catch (error) {
         setError(error.message);
+        if (error.response.status == 401) {
+          enqueueSnackbar("Invalid access", {
+            variant: "error",
+          });
+          setCurrentUser(null);
+          navigate("/login");
+        } else if (error.response.status == 404) {
+          enqueueSnackbar("Invalid patient", {
+            variant: "error",
+          });
+        } else {
+          enqueueSnackbar(`${error}`, { variant: "error" });
+        }
       }
     };
     fetchPrescriptionData();
@@ -60,6 +80,17 @@ const PrescriptionPrintingPage = () => {
       }
     } catch (error) {
       setError(error.message);
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        setCurrentUser(null);
+        navigate("/login");
+      } else if (error.response.status == 404) {
+        enqueueSnackbar("Patient not found", { variant: "error" });
+      } else {
+        enqueueSnackbar("An error occurred", { variant: "error" });
+      }
     }
   };
 

@@ -128,8 +128,6 @@ export default function SideDash() {
   const navigate = useNavigate();
 
   const { currentUser, setCurrentUser } = useContext(GlobalContext);
-
-  console.log(currentUser?.username);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -139,7 +137,6 @@ export default function SideDash() {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleLogout = async () => {
-    // Call logout API and clear session/local storage
     try {
       const response = await axios.post(
         "http://localhost:5000/api/users/logout",
@@ -149,10 +146,10 @@ export default function SideDash() {
         }
       );
       if (response.status == 200) {
-        localStorage.clear();
         setOpenModal(false);
+        setCurrentUser(null);
+        localStorage.clear();
         navigate("/");
-        window.location.reload();
         enqueueSnackbar("Logout Successful", { variant: "success" });
       }
     } catch (error) {

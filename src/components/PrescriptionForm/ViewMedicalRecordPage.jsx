@@ -35,7 +35,7 @@ const ViewMedicalRecordPage = () => {
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const { id } = useParams();
-  const { currentUser } = useContext(GlobalContext);
+  const { currentUser, setCurrentUser } = useContext(GlobalContext);
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -69,7 +69,7 @@ const ViewMedicalRecordPage = () => {
           variant: "error",
         });
         navigate("/login");
-        localStorage.clear();
+        setCurrentUser(null);
       } else if (error.response.status == 404) {
         enqueueSnackbar("Invalid patient", {
           variant: "error",
@@ -108,8 +108,8 @@ const ViewMedicalRecordPage = () => {
         enqueueSnackbar("Invalid access", {
           variant: "error",
         });
+        setCurrentUser(null);
         navigate("/login");
-        localStorage.clear();
       } else if (error.response.status == 404) {
         enqueueSnackbar("Patient not found", { variant: "error" });
       } else {
@@ -149,10 +149,10 @@ const ViewMedicalRecordPage = () => {
         enqueueSnackbar("Invalid access", {
           variant: "error",
         });
+        setCurrentUser(null);
         navigate("/login");
-        localStorage.clear();
       } else if (error.response.status == 404) {
-        enqueueSnackbar("No prescription found", { variant: "info" });
+        enqueueSnackbar("No record found", { variant: "info" });
       } else {
         enqueueSnackbar("An error occurred while deleting", {
           variant: "error",

@@ -26,42 +26,24 @@ function App() {
   const [auth, setAuth] = useState(false);
   const [role, setRole] = useState("");
   const navigate = useNavigate();
-  // const getUserFromLocalStorage = () => {
-  //   try {
-  //     const userData = localStorage.getItem("currentUser");
-  //     const user = JSON.parse(userData);
-  //     return user;
-  //   } catch (error) {
-  //     console.error("Error retrieving user from local storage:", error);
-  //     return null;
-  //   }
-  // };
-  // const getUserFromApi = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://localhost:5000/api/users/getCurrent",
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     console.log(response.data.data);
-  //   } catch (error) {
-  //     console.error("Error retrieving user from local storage:", error);
-  //     return null;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const userFromStorage = getUserFromLocalStorage();
-  //   const userFromApi = getUserFromApi();
-  //   console.log(userFromApi);
-  //   if (userFromStorage && userFromApi) {
-  //     setAuth(true);
-  //     setRole(userFromStorage.role);
-  //   } else {
-  //     navigate("/login");
-  //   }
-  // }, []);
+  const getUserFromApi = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/users/getCurrent",
+        {
+          withCredentials: true,
+        }
+      );
+      setRole(response.data.data.role);
+      console.log("role is", role);
+    } catch (error) {
+      console.error("Error retrieving user from local storage:", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    getUserFromApi();
+  }, []);
 
   return (
     <>

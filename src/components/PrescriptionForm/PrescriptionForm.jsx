@@ -70,7 +70,6 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
         enqueueSnackbar("Prescription added", { variant: "success" });
       }
     } catch (error) {
-      console.error("this is error", error);
       if (error.response.status == 401) {
         enqueueSnackbar("Invalid access", {
           variant: "error",

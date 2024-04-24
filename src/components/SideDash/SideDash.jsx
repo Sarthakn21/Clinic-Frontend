@@ -30,6 +30,8 @@ import Modal from "@mui/material/Modal";
 import { Stack } from "@mui/material";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
+import { GlobalContext } from "@/context/GlobalContext";
+import { useContext } from "react";
 
 import { useSnackbar } from "notistack";
 
@@ -113,7 +115,7 @@ const style = {
   borderRadius: "15px",
 };
 
-export default function SideDash() {
+export default function SideDash({ auth, setAuth, role }) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -123,10 +125,12 @@ export default function SideDash() {
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
   const navigate = useNavigate();
+
+  const { currentUser, setCurrentUser } = useContext(GlobalContext);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -143,16 +147,17 @@ export default function SideDash() {
         }
       );
       if (response.status == 200) {
+        setAuth(false);
         localStorage.clear();
         setOpenModal(false);
         navigate("/");
+        window.location.reload();
         enqueueSnackbar("Logout Successful", { variant: "success" });
       }
     } catch (error) {
       enqueueSnackbar("An error occured", { variant: "error" });
     }
   };
-
   return (
     <>
       <Box
@@ -295,35 +300,37 @@ export default function SideDash() {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={handleDrawerClose}
-            >
-              <ListItemButton
-                component={Link}
-                to="/register"
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open || isHovered ? "initial" : "center",
-                  px: 2.5,
-                }}
+            {currentUser?.role == "Doctor" && (
+              <ListItem
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={handleDrawerClose}
               >
-                <ListItemIcon
+                <ListItemButton
+                  component={Link}
+                  to="/register"
                   sx={{
-                    minWidth: 0,
-                    mr: open || isHovered ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open || isHovered ? "initial" : "center",
+                    px: 2.5,
                   }}
                 >
-                  <AccountBoxIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Register"
-                  sx={{ opacity: open || isHovered ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open || isHovered ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AccountBoxIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Register"
+                    sx={{ opacity: open || isHovered ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
             <ListItem
               disablePadding
               sx={{ display: "block" }}

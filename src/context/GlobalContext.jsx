@@ -4,7 +4,6 @@ export const GlobalContext = createContext();
 const GlobalProvider = ({ children }) => {
   const [tabValue, setTabValue] = useState("Dashboard");
   const [currentUser, setCurrentUser] = useState(() => {
-    // Initialize currentUser from localStorage if available
     const storedUser = localStorage.getItem("currentUser");
     return storedUser ? JSON.parse(storedUser) : null;
   });

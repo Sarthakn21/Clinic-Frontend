@@ -22,6 +22,9 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
 
 function createData(username, email, role) {
   return { username, email, role };
@@ -53,6 +56,9 @@ export default function SignUp() {
   const [role, setRole] = React.useState("Doctor");
   const [users, setUsers] = React.useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
+  const { currentUser } = useContext(GlobalContext);
 
   const Role = [
     {
@@ -123,25 +129,35 @@ export default function SignUp() {
     console.log(event.target.value);
     setRole(event.target.value);
   };
-
-  React.useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/users", {
-          withCredentials: true,
-        });
-        console.log(response.data);
-        setUsers(response.data.data);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-        enqueueSnackbar("An error occurred while fetching users", {
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/users", {
+        withCredentials: true,
+      });
+      console.log(response.data);
+      setUsers(response.data.data);
+    } catch (error) {
+      if (error.response.status === 403) {
+        enqueueSnackbar("forbidden access", {
           variant: "error",
         });
+        navigate("/login");
       }
-    };
-
-    fetchUsers();
-  }, []); // Fetch users on component mount
+      console.error("Failed to fetch users:", error);
+      enqueueSnackbar("An error occurred while fetching users", {
+        variant: "error",
+      });
+    }
+  };
+  React.useEffect(() => {
+    if (currentUser?.role === "Doctor") {
+      fetchUsers();
+    } else {
+      localStorage.clear();
+      navigate("/login");
+      window.location.reload();
+    }
+  }, []);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -236,7 +252,7 @@ export default function SignUp() {
             </Button>
           </Box>
           <Box sx={{ mt: 5, width: "100%" }}>
-            <Typography variant="h6">User Details</Typography>
+            <Typography variant="h6">Existing Users</Typography>
             <TableContainer>
               <Table>
                 <TableHead>

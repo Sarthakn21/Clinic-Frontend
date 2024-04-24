@@ -135,16 +135,14 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
           />
         </div>
         <div>
-          <Autocomplete
-            id="frequency"
-            options={frequencyOptions}
-            value={frequency}
-            onChange={(e, newValue) => setFrequency(newValue)}
-            renderInput={(params) => (
-              <TextField multiline {...params} label="Frequency" />
-            )}
-            fullWidth
-          />
+        <Autocomplete
+        id="frequency"
+        options={frequencyOptions}
+        value={frequency}
+        onChange={(e, newValue) => setFrequency(newValue)}
+        renderInput={(params) => <TextField multiline {...params} label="Frequency" />}
+        fullWidth
+      />      
         </div>
         <div>
           <TextField

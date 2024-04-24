@@ -132,7 +132,7 @@ const PrescriptionPrintingPage = () => {
                 Dr. Abhijit Bubane
               </p>
               <p style={{ fontSize: "0.8rem" }}>
-                Degree: M.D MED. (AYU.), PH.D(SCH.), D.E.M.S.
+                M.D MED. (AYU.), PH.D(SCH.), D.E.M.S.
               </p>
             </div>
             <div>

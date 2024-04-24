@@ -8,7 +8,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -31,23 +31,6 @@ function createData(username, email, role) {
 }
 
 const defaultTheme = createTheme();
-// const StyledTableCell = styled(TableCell)(({ theme }) => ({
-//   [`&.${tableCellClasses.head}`]: {
-//     backgroundColor: theme.palette.common.black,
-//     color: theme.palette.common.white,
-//   },
-//   [`&.${tableCellClasses.body}`]: {
-//     fontSize: 14,
-//     border: "none",
-//     padding: theme.spacing(2),
-//   },
-// }));
-
-// const StyledTableRow = styled(TableRow)(({ theme }) => ({
-//   "&:hover": {
-//     backgroundColor: theme.palette.action.hover,
-//   },
-// }));
 
 export default function SignUp() {
   const [username, setUsername] = React.useState("");
@@ -88,7 +71,6 @@ export default function SignUp() {
           withCredentials: true,
         }
       );
-      console.log(response);
       if (response.status === 201) {
         enqueueSnackbar("User Registered", { variant: "success" });
         setUsername("");
@@ -147,6 +129,19 @@ export default function SignUp() {
       enqueueSnackbar("An error occurred while fetching users", {
         variant: "error",
       });
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+      console.log("this is id", id);
+      await axios.delete(`http://localhost:5000/api/users/delete/${id}`, {
+        withCredentials: true,
+      });
+      setUsers(users.filter((user) => user._id !== id));
+      enqueueSnackbar("user deleted successfully", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar("Unable to delete user", { variant: "error" });
+      console.log(error);
     }
   };
   React.useEffect(() => {
@@ -260,6 +255,7 @@ export default function SignUp() {
                     <TableCell>Username</TableCell>
                     <TableCell>Email</TableCell>
                     <TableCell>Role</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -268,6 +264,11 @@ export default function SignUp() {
                       <TableCell>{user.username}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.role}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleDelete(user._id)}>
+                          <DeleteIcon style={{ color: "#f44336" }} />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

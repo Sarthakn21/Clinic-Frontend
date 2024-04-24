@@ -7,7 +7,6 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit }) => {
     name: '',
     age: '',
     gender: '',
-    // Add more fields as needed
   });
 
   const handleChange = (e) => {

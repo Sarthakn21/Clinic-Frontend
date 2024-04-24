@@ -96,7 +96,7 @@ const PatientItem = () => {
         All Patients
         <div className="p-10">
           <Input
-            placeholder="Search Patients by Name, Phone Number, Email or Patient Id"
+            placeholder="Search Patients by Name"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -144,10 +144,9 @@ const PatientItem = () => {
                   <TableCell>
                     <Button
                       onClick={() => handleDelete(patient._id)}
-                      style={{ backgroundColor: "#f44336" }} // Red background color
+                      style={{ backgroundColor: "white" }}
                     >
-                      <DeleteIcon style={{ color: "#ffffff" }} />{" "}
-                      {/* Red icon color */}
+                      <DeleteIcon style={{ color: "red" }} />
                     </Button>
                   </TableCell>
                 </TableRow>

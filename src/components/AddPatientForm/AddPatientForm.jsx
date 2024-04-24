@@ -95,7 +95,6 @@ const AddPatientForm = () => {
         }
       );
       if (response.status == 201) {
-        // console.log("response", response.status);
         enqueueSnackbar("Patient Created", {
           variant: "success",
         });

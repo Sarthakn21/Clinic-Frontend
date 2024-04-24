@@ -9,6 +9,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import "./PrescriptionForm.css";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -39,7 +41,7 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
   const [openToast, setOpenToast] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-
+  const { setCurrentUser } = useContext(GlobalContext);
   const handleAddMedicine = () => {
     setMedications([...medications, { medicineName, frequency, quantity }]);
     setMedicineName("");
@@ -73,8 +75,9 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
         enqueueSnackbar("Invalid access", {
           variant: "error",
         });
-        navigate("/login");
         localStorage.clear();
+        setCurrentUser(null);
+        navigate("/login");
       } else if (error.response.status == 400) {
         enqueueSnackbar("Invalid field type", { variant: "info" });
       } else if (error.response.status == 404) {
@@ -137,7 +140,9 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
             options={frequencyOptions}
             value={frequency}
             onChange={(e, newValue) => setFrequency(newValue)}
-            renderInput={(params) => <TextField multiline {...params} label="Frequency" />}
+            renderInput={(params) => (
+              <TextField multiline {...params} label="Frequency" />
+            )}
             fullWidth
             multiline
           />

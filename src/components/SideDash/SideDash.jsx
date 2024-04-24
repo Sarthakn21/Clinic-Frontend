@@ -22,7 +22,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Button from "@mui/material/Button";import PersonIcon from '@mui/icons-material/Person';
+import Button from "@mui/material/Button";
+import PersonIcon from "@mui/icons-material/Person";
 
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -115,7 +116,7 @@ const style = {
   borderRadius: "15px",
 };
 
-export default function SideDash({ auth, setAuth, role }) {
+export default function SideDash() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -148,7 +149,6 @@ export default function SideDash({ auth, setAuth, role }) {
         }
       );
       if (response.status == 200) {
-        setAuth(false);
         localStorage.clear();
         setOpenModal(false);
         navigate("/");
@@ -361,33 +361,32 @@ export default function SideDash({ auth, setAuth, role }) {
               </ListItemButton>
             </ListItem>
             <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={handleDrawerClose}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open || isHovered ? "initial" : "center",
-                px: 2.5,
-              }}
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={handleDrawerClose}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open || isHovered ? 3 : "auto",
-                  justifyContent: "center",
-                  
+                  minHeight: 48,
+                  justifyContent: open || isHovered ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-              <PersonIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={currentUser?.username}
-                sx={{ opacity: open || isHovered ? 1 : 0, padding:'0' }}
-              />
-            </ListItemButton>
-          </ListItem>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open || isHovered ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={currentUser?.username}
+                  sx={{ opacity: open || isHovered ? 1 : 0, padding: "0" }}
+                />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Drawer>
         <Modal

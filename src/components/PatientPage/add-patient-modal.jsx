@@ -15,7 +15,7 @@ const AddPatientModal = ({ isOpen, onClose, onSubmit }) => {
     };
 
     return (
-        <Modal open={isOpen} onClose={onClose}>
+        <Modal open={isOpen} onClose={handleCloseModal}>
             <AddPatientForm onSubmit={onSubmit} onClose={onClose} />
         </Modal>
     );

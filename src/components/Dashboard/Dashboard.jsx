@@ -9,6 +9,9 @@ import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { useEffect, useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
+import { useNavigate } from "react-router-dom";
 
 import PendingAppointmentCount from "./PendingAppointmentCount";
 import TotalPatientsCount from "./totalPatientsCount";
@@ -38,10 +41,18 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
+  const navigate = useNavigate();
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
+  const { currentUser } = useContext(GlobalContext);
+  useEffect(() => {
+    console.log("i am stupid");
+    console.log(currentUser);
+    if (!currentUser) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
@@ -60,9 +71,7 @@ export default function Dashboard() {
             // backgroundColor: "red",
           }}
         >
-          <Container
-            sx={{ width: "150vw", mt: 4, mb: 4}}
-          >
+          <Container sx={{ width: "150vw", mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Chart */}
               <Grid item xs={12} md={6} lg={6}>

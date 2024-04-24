@@ -98,6 +98,7 @@ const AddPatientForm = () => {
         enqueueSnackbar("Patient Created", {
           variant: "success",
         });
+        onclose()
       }
     } catch (error) {
       console.log(error);

@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import Modal from "@mui/material/Modal";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import Autocomplete from "@mui/material/Autocomplete";
 import "./PrescriptionForm.css";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +13,21 @@ import { useNavigate } from "react-router-dom";
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
+
+const frequencyOptions = [
+  "morning - (bm)",
+  "morning - (am)",
+  "afternoon - (bm)",
+  "afternoon - (am)",
+  "evening - (bm)",
+  "evening - (am)",
+  "night - (bm)",
+  "night - (am)",
+  "morning - evening",
+  "morning - night",
+  "afternoon - night",
+  "morning - evening - night",
+];
 
 const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
   const { id } = useParams();
@@ -22,14 +38,14 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
   const [symptoms, setSymptoms] = useState("");
   const [openToast, setOpenToast] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
   const handleAddMedicine = () => {
     setMedications([...medications, { medicineName, frequency, quantity }]);
     setMedicineName("");
     setFrequency("");
     setQuantity("");
   };
-
-  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
@@ -44,7 +60,7 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
         }
       );
       if (response.status === 201) {
-        console.log("this is added prescriprtion response", response);
+        console.log("this is added prescription response", response);
         setShowModal(false);
         setOpenToast(true);
         onSubmit();
@@ -67,7 +83,7 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
         enqueueSnackbar("Invalid operation for role", { variant: "warning" });
         setShowModal(false);
       } else {
-        enqueueSnackbar("An error occured", { variant: "error" });
+        enqueueSnackbar("An error occurred", { variant: "error" });
       }
     }
   };
@@ -116,14 +132,14 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
           />
         </div>
         <div>
-          <TextField
+          <Autocomplete
             id="frequency"
-            label="Frequency"
+            options={frequencyOptions}
             value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            multiline
-            maxRows={4}
+            onChange={(e, newValue) => setFrequency(newValue)}
+            renderInput={(params) => <TextField multiline {...params} label="Frequency" />}
             fullWidth
+            multiline
           />
         </div>
         <div>

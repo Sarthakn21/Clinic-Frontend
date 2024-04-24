@@ -78,48 +78,49 @@ const AddPatientForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/patients/register",
-        {
-          name,
-          contactNumber,
-          age,
-          weight,
-          gender,
-          Dob,
-          address,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      if (response.status == 201) {
-        enqueueSnackbar("Patient Created", {
-          variant: "success",
-        });
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/patients/register",
+      {
+        name,
+        contactNumber,
+        age,
+        weight,
+        gender,
+        Dob,
+        address,
+      },
+      {
+        withCredentials: true,
       }
-    } catch (error) {
-      console.log(error);
-      if (error.response.status == 401) {
-        enqueueSnackbar("Invalid access", {
-          variant: "error",
-        });
-        navigate("/login");
-        localStorage.clear();
-      } else if (error.response.status == 400) {
-        enqueueSnackbar("Please enter all Fields", { variant: "error" });
-      } else {
-        enqueueSnackbar("An error occured", { variant: "error" });
-      }
+    );
+    if (response.status === 201) {
+      enqueueSnackbar("Patient Created", {
+        variant: "success",
+      });
+
     }
+  } catch (error) {
+    console.log(error);
+    if (error.response.status === 401) {
+      enqueueSnackbar("Invalid access", {
+        variant: "error",
+      });
+      navigate("/login");
+      localStorage.clear();
+    } else if (error.response.status === 400) {
+      enqueueSnackbar("Please enter all Fields", { variant: "error" });
+    } else {
+      enqueueSnackbar("An error occured", { variant: "error" });
+    }
+  }
   };
 
   return (
     <FormContainer className="bg-white">
       <FormWrapper>
         <FormTitle>Add New Patient</FormTitle>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onClick={handleCloseModal}>
           <TextField
             label="Name"
             type="text"
@@ -202,7 +203,7 @@ const AddPatientForm = () => {
             fullWidth
             margin="normal"
           />
-          <Button type="submit" variant="contained" color="primary" fullWidth>
+          <Button type="submit" variant="contained" color="primary" fullWidth >
             Submit
           </Button>
         </form>

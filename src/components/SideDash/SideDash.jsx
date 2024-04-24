@@ -22,7 +22,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Button from "@mui/material/Button";
+import Button from "@mui/material/Button";import PersonIcon from '@mui/icons-material/Person';
 
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -128,6 +128,7 @@ export default function SideDash({ auth, setAuth, role }) {
 
   const { currentUser, setCurrentUser } = useContext(GlobalContext);
 
+  console.log(currentUser?.username);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -359,6 +360,34 @@ export default function SideDash({ auth, setAuth, role }) {
                 />
               </ListItemButton>
             </ListItem>
+            <ListItem
+            disablePadding
+            sx={{ display: "block" }}
+            onClick={handleDrawerClose}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open || isHovered ? "initial" : "center",
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open || isHovered ? 3 : "auto",
+                  justifyContent: "center",
+                  
+                }}
+              >
+              <PersonIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={currentUser?.username}
+                sx={{ opacity: open || isHovered ? 1 : 0, padding:'0' }}
+              />
+            </ListItemButton>
+          </ListItem>
           </List>
         </Drawer>
         <Modal

@@ -397,7 +397,7 @@ export default function SideDash() {
         >
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Are you sure
+              Are you sure to Logout ?
             </Typography>
             <Stack spacing={2} direction="row" sx={{ marginTop: 3 }}>
               <Button variant="contained" onClick={handleLogout}>

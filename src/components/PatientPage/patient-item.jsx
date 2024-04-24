@@ -14,6 +14,7 @@ import { Input } from "../ui/input";
 import AddPatientModal from "./add-patient-modal";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import DeleteIcon from "@mui/icons-material/Delete"; // Import delete icon
 
 const PatientItem = () => {
   const [patients, setPatients] = useState([]);
@@ -73,6 +74,19 @@ const PatientItem = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/patients/delete/${id}`, {
+        withCredentials: true,
+      });
+      setPatients(patients.filter(patient => patient._id !== id));
+      enqueueSnackbar("Patient deleted successfully", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar("Unable to delete patient", { variant: "error" });
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <div className="text-4xl font-semibold">
@@ -106,6 +120,7 @@ const PatientItem = () => {
             <TableHead>Weight</TableHead>
             <TableHead>Age</TableHead>
             <TableHead>Actions</TableHead>
+            <TableHead style={{ width: "80px" }}>Delete</TableHead> {/* Reduced width */}
           </TableRow>
         </TableHeader>
         {patients ? (
@@ -122,6 +137,14 @@ const PatientItem = () => {
                   <TableCell>{patient.age}</TableCell>
                   <TableCell>
                     <Link to={`/patientinfo/${patient._id}`}>View</Link>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleDelete(patient._id)}
+                      style={{ backgroundColor: "#f44336" }} // Red background color
+                    >
+                      <DeleteIcon style={{ color: "#ffffff" }} /> {/* Red icon color */}
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

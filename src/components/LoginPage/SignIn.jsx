@@ -105,9 +105,10 @@ export default function SignIn() {
         maxWidth="xs"
         sx={{
           backgroundColor: "white",
-          border: "2px solid black",
+          border: "1px solid black",
           borderRadius: "10px",
           padding: "15px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.8)",
         }}
       >
         <CssBaseline />

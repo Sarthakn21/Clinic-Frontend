@@ -77,6 +77,7 @@ export default function SignUp() {
         setEmail("");
         setPassword("");
         setRole("Doctor");
+        fetchUsers();
       }
     } catch (error) {
       console.log(error);

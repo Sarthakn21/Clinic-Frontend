@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "./context/GlobalContext";
 
@@ -19,32 +25,47 @@ function App() {
   const { currentUser } = useContext(GlobalContext);
   const [auth, setAuth] = useState(false);
   const [role, setRole] = useState("");
+  const navigate = useNavigate();
+  // const getUserFromLocalStorage = () => {
+  //   try {
+  //     const userData = localStorage.getItem("currentUser");
+  //     const user = JSON.parse(userData);
+  //     return user;
+  //   } catch (error) {
+  //     console.error("Error retrieving user from local storage:", error);
+  //     return null;
+  //   }
+  // };
+  // const getUserFromApi = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:5000/api/users/getCurrent",
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     console.log(response.data.data);
+  //   } catch (error) {
+  //     console.error("Error retrieving user from local storage:", error);
+  //     return null;
+  //   }
+  // };
 
-  const getUserFromLocalStorage = () => {
-    try {
-      const userData = localStorage.getItem("currentUser");
-      const user = JSON.parse(userData);
-      return user;
-    } catch (error) {
-      console.error("Error retrieving user from local storage:", error);
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    const userFromStorage = getUserFromLocalStorage();
-    if (userFromStorage && userFromStorage.role) {
-      setAuth(true);
-      setRole(userFromStorage.role);
-    } else {
-      setAuth(false);
-      setRole("");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const userFromStorage = getUserFromLocalStorage();
+  //   const userFromApi = getUserFromApi();
+  //   console.log(userFromApi);
+  //   if (userFromStorage && userFromApi) {
+  //     setAuth(true);
+  //     setRole(userFromStorage.role);
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   return (
     <>
-      {currentUser && <SideDash auth={auth} setAuth={setAuth} role={role} />}
+      {currentUser && <SideDash />}
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />

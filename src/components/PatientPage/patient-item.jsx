@@ -11,12 +11,13 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import AddPatientModal from "./add-patient-modal";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import delete icon
 import { useContext } from "react";
 import { GlobalContext } from "@/context/GlobalContext";
+import AddPatientForm from "./AddPatientForm";
+import dayjs from "dayjs";
 
 const PatientItem = () => {
   const [patients, setPatients] = useState([]);
@@ -37,23 +38,22 @@ const PatientItem = () => {
     console.log("Adding record:", record);
     handleCloseModal();
   };
+  const getPatients = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/patients", {
+        withCredentials: true,
+      });
 
-  useEffect(() => {
-    async function getPatients() {
-      try {
-        const response = await axios.get("http://localhost:5000/api/patients", {
-          withCredentials: true,
-        });
-
-        console.log("this is response", response);
-        setPatients(response.data.data);
-      } catch (error) {
-        if (error.response.status == 401) {
-          enqueueSnackbar("Unauthorized request", { variant: "error" });
-        }
-        enqueueSnackbar("Some error occured", { variant: "error" });
+      console.log("this is response", response);
+      setPatients(response.data.data);
+    } catch (error) {
+      if (error.response.status == 401) {
+        enqueueSnackbar("Unauthorized request", { variant: "error" });
       }
+      enqueueSnackbar("Some error occured", { variant: "error" });
     }
+  };
+  useEffect(() => {
     getPatients();
   }, []);
 
@@ -104,11 +104,6 @@ const PatientItem = () => {
         </div>
         <div className="flex items-center justify-center">
           <Button onClick={handleOpenModal}>Add New Patient</Button>
-          <AddPatientModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            onSubmit={handleAddRecord}
-          />
         </div>
       </div>
       <Table>
@@ -133,7 +128,9 @@ const PatientItem = () => {
                 <TableRow key={patient._id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{patient.name}</TableCell>
-                  <TableCell>{patient.Dob}</TableCell>
+                  <TableCell>
+                    {dayjs(patient.Dob).format("DD-MM-YYYY")}
+                  </TableCell>
                   <TableCell>{patient.gender}</TableCell>
                   <TableCell>{patient.contactNumber}</TableCell>
                   <TableCell>{patient.weight}</TableCell>
@@ -156,6 +153,14 @@ const PatientItem = () => {
           <h3>Loading</h3>
         )}
       </Table>
+      {isModalOpen && (
+        <AddPatientForm
+          getPatients={getPatients}
+          isModalOpen={isModalOpen}
+          handleOpenModal={handleOpenModal}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

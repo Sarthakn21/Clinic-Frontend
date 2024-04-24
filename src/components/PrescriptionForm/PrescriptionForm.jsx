@@ -35,7 +35,7 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
   const { id } = useParams();
   const [medications, setMedications] = useState([]);
   const [medicineName, setMedicineName] = useState("");
-  const [frequency, setFrequency] = useState("");
+  const [frequency, setFrequency] = useState(null); // Changed initial value to null
   const [quantity, setQuantity] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [openToast, setOpenToast] = useState(false);
@@ -45,7 +45,7 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
   const handleAddMedicine = () => {
     setMedications([...medications, { medicineName, frequency, quantity }]);
     setMedicineName("");
-    setFrequency("");
+    setFrequency(null); // Reset frequency to null after adding medicine
     setQuantity("");
   };
 
@@ -144,7 +144,6 @@ const PrescriptionForm = ({ setShowModal, onSubmit, fetchPrescription }) => {
               <TextField multiline {...params} label="Frequency" />
             )}
             fullWidth
-            multiline
           />
         </div>
         <div>

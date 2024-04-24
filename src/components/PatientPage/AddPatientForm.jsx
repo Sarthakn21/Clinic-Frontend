@@ -10,6 +10,8 @@ import dayjs from "dayjs";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
 import { Modal } from "@mui/material";
 
 const FormContainer = styled.div`
@@ -48,6 +50,8 @@ const AddPatientForm = ({
   const [gender, setGender] = useState("");
   const [Dob, setDob] = useState("");
   const [address, setAddress] = useState("");
+
+  const { currentUser, setCurrentUser } = useContext(GlobalContext);
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -125,6 +129,7 @@ const AddPatientForm = ({
         enqueueSnackbar("Invalid access", {
           variant: "error",
         });
+        setCurrentUser(null);
         navigate("/login");
         localStorage.clear();
       } else if (error.response && error.response.status == 400) {

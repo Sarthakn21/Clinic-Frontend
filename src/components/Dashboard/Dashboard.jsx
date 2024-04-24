@@ -47,8 +47,6 @@ export default function Dashboard() {
   };
   const { currentUser } = useContext(GlobalContext);
   useEffect(() => {
-    console.log("i am stupid");
-    console.log(currentUser);
     if (!currentUser) {
       navigate("/login");
     }

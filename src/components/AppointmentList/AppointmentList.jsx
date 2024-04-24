@@ -19,7 +19,8 @@ import MenuItem from "@mui/material/MenuItem"; // Import MenuItem component
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -52,6 +53,7 @@ export default function AppointmentList() {
   });
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const { setCurrentUser } = useContext(GlobalContext);
 
   const fetchAppointments = async () => {
     try {
@@ -148,7 +150,6 @@ export default function AppointmentList() {
       );
 
       if (response.status === 201) {
-        console.log("Appointment added successfully!", response);
         enqueueSnackbar("Appointment added", { variant: "success" });
       }
 
@@ -169,6 +170,7 @@ export default function AppointmentList() {
         enqueueSnackbar("Invalid access", {
           variant: "error",
         });
+        setCurrentUser(null);
         navigate("/login");
         localStorage.clear();
       } else if (error.response.status == 400) {

@@ -41,7 +41,7 @@ export default function SignUp() {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const { currentUser } = useContext(GlobalContext);
+  const { currentUser, setCurrentUser } = useContext(GlobalContext);
 
   const Role = [
     {
@@ -90,6 +90,13 @@ export default function SignUp() {
         enqueueSnackbar("Invalid password", { variant: "error" });
       } else if (error.response.status == 400) {
         enqueueSnackbar(`${error.response.data.error}`, { variant: "error" });
+      }
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        setCurrentUser(null);
       } else {
         enqueueSnackbar("An error occurred", { variant: "error" });
       }
@@ -141,8 +148,17 @@ export default function SignUp() {
       setUsers(users.filter((user) => user._id !== id));
       enqueueSnackbar("user deleted successfully", { variant: "success" });
     } catch (error) {
-      enqueueSnackbar("Unable to delete user", { variant: "error" });
-      console.log(error);
+      if (error.response.status == 403) {
+        enqueueSnackbar("Invalid action for role", { variant: "warning" });
+      } else if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        setCurrentUser(null);
+        navigate("/login");
+      } else {
+        enqueueSnackbar("Unable to delete user", { variant: "error" });
+      }
     }
   };
   React.useEffect(() => {
@@ -150,8 +166,8 @@ export default function SignUp() {
       fetchUsers();
     } else {
       localStorage.clear();
+      setCurrentUser(null);
       navigate("/login");
-      window.location.reload();
     }
   }, []);
 

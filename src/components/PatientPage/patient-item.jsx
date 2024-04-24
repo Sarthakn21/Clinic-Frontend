@@ -18,13 +18,14 @@ import { useContext } from "react";
 import { GlobalContext } from "@/context/GlobalContext";
 import AddPatientForm from "./AddPatientForm";
 import dayjs from "dayjs";
-
+import { useNavigate } from "react-router-dom";
 const PatientItem = () => {
   const [patients, setPatients] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const { currentUser } = useContext(GlobalContext);
+  const { currentUser, setCurrentUser } = useContext(GlobalContext);
+  const navigate = useNavigate();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -48,9 +49,14 @@ const PatientItem = () => {
       setPatients(response.data.data);
     } catch (error) {
       if (error.response.status == 401) {
-        enqueueSnackbar("Unauthorized request", { variant: "error" });
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        setCurrentUser(null);
+      } else {
+        enqueueSnackbar("Some error occurred", { variant: "error" });
       }
-      enqueueSnackbar("Some error occured", { variant: "error" });
     }
   };
   useEffect(() => {
@@ -68,6 +74,15 @@ const PatientItem = () => {
       setPatients(response.data.data);
     } catch (error) {
       console.log(error);
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        navigate("/login");
+        setCurrentUser(null);
+      } else {
+        enqueueSnackbar("An error occurred", { variant: "error" });
+      }
     }
   };
 
@@ -85,8 +100,19 @@ const PatientItem = () => {
       setPatients(patients.filter((patient) => patient._id !== id));
       enqueueSnackbar("Patient deleted successfully", { variant: "success" });
     } catch (error) {
-      enqueueSnackbar("Unable to delete patient", { variant: "error" });
-      console.log(error);
+      if (error.response.status == 403) {
+        enqueueSnackbar("Invalid action for role", { variant: "warning" });
+      } else if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        setCurrentUser(null);
+        navigate("/login");
+      } else {
+        enqueueSnackbar("An error occurred while deleting", {
+          variant: "error",
+        });
+      }
     }
   };
 

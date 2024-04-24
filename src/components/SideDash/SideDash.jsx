@@ -153,7 +153,13 @@ export default function SideDash() {
         enqueueSnackbar("Logout Successful", { variant: "success" });
       }
     } catch (error) {
-      enqueueSnackbar("An error occured", { variant: "error" });
+      if (error.response.status == 401) {
+        enqueueSnackbar("Invalid access", {
+          variant: "error",
+        });
+        setCurrentUser(null);
+        navigate("/login");
+      }
     }
   };
   return (

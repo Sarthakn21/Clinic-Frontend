@@ -63,7 +63,6 @@ const ViewMedicalRecordPage = () => {
         fetchPatientDetails();
       }
     } catch (error) {
-      console.error("Failed to fetch prescriptions:", error);
       if (error.response.status == 401) {
         enqueueSnackbar("Invalid access", {
           variant: "error",
@@ -103,7 +102,6 @@ const ViewMedicalRecordPage = () => {
         console.error("Failed to fetch patient details:", response.statusText);
       }
     } catch (error) {
-      console.error("Failed to fetch patient details:", error);
       if (error.response.status == 401) {
         enqueueSnackbar("Invalid access", {
           variant: "error",

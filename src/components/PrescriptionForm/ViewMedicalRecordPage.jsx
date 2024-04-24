@@ -20,6 +20,8 @@ import { useSnackbar } from "notistack";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
 
 const ViewMedicalRecordPage = () => {
   const [patientDetails, setPatientDetails] = useState({
@@ -33,6 +35,7 @@ const ViewMedicalRecordPage = () => {
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const { id } = useParams();
+  const { currentUser } = useContext(GlobalContext);
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -116,7 +119,6 @@ const ViewMedicalRecordPage = () => {
   };
 
   useEffect(() => {
-    // Function to fetch prescription by patientId
     const fetchPrescriptionAndPatientDetails = async () => {
       await fetchPrescription();
     };
@@ -238,14 +240,35 @@ const ViewMedicalRecordPage = () => {
           </Typography>
         </Box>
       </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ marginBottom: "16px" }}
-        onClick={() => setShowModal(true)}
+      {currentUser?.role === "Doctor" && (
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginBottom: "16px" }}
+          onClick={() => setShowModal(true)}
+        >
+          Add New Record
+        </Button>
+      )}
+      <hr
+        style={{
+          width: "100%",
+          border: "1px solid black",
+          marginBottom: "20px",
+        }}
+      />
+      <Typography
+        variant="h1"
+        sx={{
+          fontFamily: "sans-serif",
+          fontSize: "2rem",
+          color: "#074173",
+          marginBottom: "20px",
+        }}
       >
-        Add New Record
-      </Button>
+        Records History
+      </Typography>
+
       {medicalRecords
         .slice()
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -364,30 +387,35 @@ const ViewMedicalRecordPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop:"20px",
-                      padding:"10px",
-                    }}
-                  >
-                    <div>
-                      <IconButton
-                        onClick={() => handleDeleteRecord(record._id)}
-                        sx={{ marginRight: "8px" }}
-                      >
-                        <DeleteIcon color="error" />
-                      </IconButton>
+                  {currentUser?.role === "Doctor" && (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "20px",
+                        padding: "10px",
+                      }}
+                    >
+                      <div>
+                        <IconButton
+                          onClick={() => handleDeleteRecord(record._id)}
+                          sx={{ marginRight: "8px" }}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </div>
+                      <div style={{ marginLeft: "16px" }}>
+                        <IconButton
+                          component={Link}
+                          to={`/Print/${record._id}`}
+                        >
+                          <PrintIcon color="primary" />
+                        </IconButton>
+                      </div>
                     </div>
-                    <div style={{marginLeft: "16px"}}>
-                      <IconButton component={Link} to={`/Print/${record._id}`}>
-                        <PrintIcon color="primary" />
-                      </IconButton>
-                    </div>
-                  </div>
+                  )}
                 </Box>
               </CardContent>
             </Card>

@@ -15,12 +15,15 @@ import AddPatientModal from "./add-patient-modal";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import delete icon
+import { useContext } from "react";
+import { GlobalContext } from "@/context/GlobalContext";
 
 const PatientItem = () => {
   const [patients, setPatients] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const { currentUser } = useContext(GlobalContext);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -45,10 +48,10 @@ const PatientItem = () => {
         console.log("this is response", response);
         setPatients(response.data.data);
       } catch (error) {
-        enqueueSnackbar("Unauthorized request", { variant: "error" });
         if (error.response.status == 401) {
           enqueueSnackbar("Unauthorized request", { variant: "error" });
         }
+        enqueueSnackbar("Some error occured", { variant: "error" });
       }
     }
     getPatients();
@@ -79,7 +82,7 @@ const PatientItem = () => {
       await axios.delete(`http://localhost:5000/api/patients/delete/${id}`, {
         withCredentials: true,
       });
-      setPatients(patients.filter(patient => patient._id !== id));
+      setPatients(patients.filter((patient) => patient._id !== id));
       enqueueSnackbar("Patient deleted successfully", { variant: "success" });
     } catch (error) {
       enqueueSnackbar("Unable to delete patient", { variant: "error" });
@@ -120,7 +123,7 @@ const PatientItem = () => {
             <TableHead>Weight</TableHead>
             <TableHead>Age</TableHead>
             <TableHead>Actions</TableHead>
-            <TableHead style={{ width: "80px" }}>Delete</TableHead> {/* Reduced width */}
+            <TableHead style={{ width: "80px" }}>Delete</TableHead>{" "}
           </TableRow>
         </TableHeader>
         {patients ? (
@@ -143,7 +146,8 @@ const PatientItem = () => {
                       onClick={() => handleDelete(patient._id)}
                       style={{ backgroundColor: "#f44336" }} // Red background color
                     >
-                      <DeleteIcon style={{ color: "#ffffff" }} /> {/* Red icon color */}
+                      <DeleteIcon style={{ color: "#ffffff" }} />{" "}
+                      {/* Red icon color */}
                     </Button>
                   </TableCell>
                 </TableRow>

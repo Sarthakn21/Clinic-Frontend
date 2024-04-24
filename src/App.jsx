@@ -22,8 +22,7 @@ import Print from "./pages/Print";
 import axios from "axios";
 
 function App() {
-  const { currentUser } = useContext(GlobalContext);
-  const [auth, setAuth] = useState(false);
+  const { currentUser, setCurrentUser } = useContext(GlobalContext);
   const [role, setRole] = useState("");
   const navigate = useNavigate();
   const getUserFromApi = async () => {
@@ -50,14 +49,48 @@ function App() {
       {currentUser && <SideDash />}
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        {!currentUser && !currentUser ? (
+          <Route path="/login" element={<LoginPage />} />
+        ) : (
+          <Route path="/login" element={<LandingPage />} />
+        )}
         <Route path="/appointment" element={<AppointmentPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/patients" element={<PatientPage />} />
-        <Route path="/patientinfo/:id" element={<PatientInfoPage />} />
-        <Route path="/prescription" element={<PrescriptionPage />} />
-        <Route path="/Print/:id" element={<Print />} />
+
+        {currentUser && currentUser ? (
+          <Route path="/dashboard" element={<DashboardPage />} />
+        ) : (
+          <Route path="/dashboard" element={<LoginPage doneed={true} />} />
+        )}
+        {currentUser && currentUser.role == "Doctor" ? (
+          <Route path="/register" element={<RegisterPage />} />
+        ) : (
+          <Route path="/register" element={<LoginPage doneed={true} />} />
+        )}
+        {currentUser && currentUser ? (
+          <Route path="/patients" element={<PatientPage />} />
+        ) : (
+          <Route path="/patients" element={<LoginPage doneed={true} />} />
+        )}
+        {currentUser && currentUser ? (
+          <Route path="/patientinfo/:id" element={<PatientInfoPage />} />
+        ) : (
+          <Route
+            path="/patientinfo/:id"
+            element={<LoginPage doneed={true} />}
+          />
+        )}
+
+        {currentUser && currentUser.role == "Doctor" ? (
+          <Route path="/prescription" element={<PrescriptionPage />} />
+        ) : (
+          <Route path="/prescription" element={<LoginPage doneed={true} />} />
+        )}
+
+        {currentUser && currentUser.role == "Doctor" ? (
+          <Route path="/Print/:id" element={<Print />} />
+        ) : (
+          <Route path="/Print/:id" element={<LoginPage />} />
+        )}
       </Routes>
     </>
   );

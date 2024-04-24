@@ -4,9 +4,6 @@ import Features from "../components/LandingPage/features";
 import Footer from "../components/LandingPage/footer";
 import Navbar from "../components/navbar";
 export default function LandingPage() {
-  useEffect(() => {
-    localStorage.clear();
-  }, []);
   return (
     <div className="w-full">
       <Navbar />

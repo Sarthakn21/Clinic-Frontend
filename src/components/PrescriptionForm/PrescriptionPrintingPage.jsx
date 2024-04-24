@@ -53,6 +53,7 @@ const PrescriptionPrintingPage = () => {
           });
           setCurrentUser(null);
           navigate("/login");
+          localStorage.clear();
         } else if (error.response.status == 404) {
           enqueueSnackbar("Invalid patient", {
             variant: "error",
@@ -86,6 +87,7 @@ const PrescriptionPrintingPage = () => {
         });
         setCurrentUser(null);
         navigate("/login");
+        localStorage.clear();
       } else if (error.response.status == 404) {
         enqueueSnackbar("Patient not found", { variant: "error" });
       } else {
